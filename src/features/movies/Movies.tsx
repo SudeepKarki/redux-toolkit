@@ -1,7 +1,8 @@
+import { Button } from "kwant-ui";
 import { useState } from "react";
-import { useGetMoviesQuery } from "./moviesApiSlice";
-import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
+import { useGetMoviesQuery } from "./moviesApiSlice";
 
 const options = [5, 10, 20, 30]
 
@@ -83,7 +84,7 @@ const Heading = styled.div`
 export const Movies = () => {
     const navigate = useNavigate()
     const [numberOfMovies, setNumberOfMovies] = useState(10)
-    const { data, isError, isLoading, isSuccess } = useGetMoviesQuery(numberOfMovies);
+    const { data, refetch, isError, isLoading, isSuccess } = useGetMoviesQuery(numberOfMovies);
     const [searchInput, setSearchInput] = useState('');
 
     if (isError) {
@@ -111,6 +112,9 @@ export const Movies = () => {
         const filteredMovies = data.data.movies.filter((movie) =>
             movie.title.toLowerCase().includes(searchInput.toLowerCase())
         );
+        const handleRefetch = () => {
+            refetch()
+        }
         return (
             <>
                 <Heading>
@@ -135,6 +139,7 @@ export const Movies = () => {
                             ))}
                         </select>
                     </div>
+                    <Button label="Refetch Data" onClick={handleRefetch}></Button>
                 </Heading>
                 <ContainerBoxWrap>
                     {filteredMovies.map(({ id, title, medium_cover_image }) => (
